@@ -1,22 +1,17 @@
 from db.database import Database
-
+from providers.yahoo import YahooProvider
 from repositories.exchange_repository import ExchangeRepository
 from repositories.currency_repository import CurrencyRepository
 from repositories.asset_type_repository import AssetTypeRepository
 from repositories.asset_repository import AssetRepository
 from repositories.price_repository import PriceRepository
-from services.yahoo import YahooService
-from services.yahoo_price import YahooPriceService
-from mappers.yahoo_mapper import YahooMapper
-from mappers.price_mapper import PriceMapper
 from importers.assets import AssetImporter
 from importers.prices import PriceImporter
 
 
 def main():
-
     ticker = "MSFT"
-
+    provider = YahooProvider()
     with Database() as db:
         exchange_repo = ExchangeRepository(db)
         currency_repo = CurrencyRepository(db)
@@ -29,13 +24,11 @@ def main():
         )
         price_repo = PriceRepository(db)
         asset_importer = AssetImporter(
-            YahooService(),
-            YahooMapper(),
+            provider,
             asset_repo,
         )
         price_importer = PriceImporter(
-            YahooPriceService(),
-            PriceMapper(),
+            provider,
             asset_repo,
             price_repo,
         )

@@ -1,5 +1,4 @@
-from services.yahoo_price import YahooPriceService
-from mappers.price_mapper import PriceMapper
+from providers.provider import MarketDataProvider
 from repositories.asset_repository import AssetRepository
 from repositories.price_repository import PriceRepository
 from utils.logger import get_logger
@@ -7,18 +6,16 @@ from utils.logger import get_logger
 
 class PriceImporter:
     """
-    Imports historical prices from Yahoo Finance into PostgreSQL.
+    Imports historical prices from a market data provider into PostgreSQL.
     """
 
     def __init__(
         self,
-        yahoo_price_service: YahooPriceService,
-        price_mapper: PriceMapper,
+        provider: MarketDataProvider,
         asset_repository: AssetRepository,
         price_repository: PriceRepository,
     ):
-        self._yahoo_price_service = yahoo_price_service
-        self._price_mapper = price_mapper
+        self._provider = provider
         self._asset_repository = asset_repository
         self._price_repository = price_repository
         self._logger = get_logger(self.__class__.__name__)
@@ -49,18 +46,18 @@ class PriceImporter:
                 f"Ticker '{ticker}' does not exist in core.assets."
             )
 
-        yahoo_prices = self._yahoo_price_service.get_history(ticker)
+        prices = self._provider.get_price_history(ticker)
 
         count = 0
 
-        for yahoo_price in yahoo_prices:
+        for price in prices:
 
-            price = self._price_mapper.map(
-                asset_id=asset_id,
-                yahoo_price=yahoo_price,
-            )
+            # Provider vrací Price bez asset_id,
+            # importer doplní vazbu na databázový záznam.
+            price.asset_id = asset_id
 
             self._price_repository.upsert(price)
+
             count += 1
 
         self._logger.info(

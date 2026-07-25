@@ -8,8 +8,9 @@ from decimal import Decimal
 class YahooPrice:
     """
     Historical daily price returned by Yahoo Finance.
-    This model is provider-specific and intentionally does not
-    contain internal database identifiers.
+    This is a provider-specific DTO used to transfer price data
+    from YahooProvider to the importer. It intentionally does not
+    contain any internal database identifiers.
     """
 
     trading_date: date
