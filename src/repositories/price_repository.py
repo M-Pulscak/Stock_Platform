@@ -13,7 +13,7 @@ class PriceRepository:
         INSERT INTO market.prices_daily
         (
             asset_id,
-            trading_date,
+            trade_date,
             open,
             high,
             low,
@@ -33,7 +33,7 @@ class PriceRepository:
             %s
         )
 
-        ON CONFLICT (asset_id, trading_date)
+        ON CONFLICT (asset_id, trade_date)
 
         DO UPDATE SET
 
@@ -42,8 +42,7 @@ class PriceRepository:
             low = EXCLUDED.low,
             close = EXCLUDED.close,
             adjusted_close = EXCLUDED.adjusted_close,
-            volume = EXCLUDED.volume,
-            updated_at = NOW();
+            volume = EXCLUDED.volume;
         """
 
         self._db.execute(

@@ -9,9 +9,9 @@
 -- ============================================================================
 INSERT INTO core.asset_types (name)
 VALUES
-    ('Stock'),
+    ('STOCK'),
     ('ETF'),
-    ('Index')
+    ('INDEX')
 ON CONFLICT (name) DO NOTHING;
 
 
