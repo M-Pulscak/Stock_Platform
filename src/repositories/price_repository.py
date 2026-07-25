@@ -7,6 +7,16 @@ class PriceRepository:
     def __init__(self, db: Database):
         self._db = db
 
+    def get_last_trade_date(self, asset_id: int):
+
+        sql = """
+        SELECT MAX(trade_date)
+        FROM market.prices_daily
+        WHERE asset_id = %s;
+        """
+
+        return self._db.scalar(sql, (asset_id,))
+
     def upsert(self, price: Price) -> None:
 
         sql = """
@@ -42,7 +52,8 @@ class PriceRepository:
             low = EXCLUDED.low,
             close = EXCLUDED.close,
             adjusted_close = EXCLUDED.adjusted_close,
-            volume = EXCLUDED.volume;
+            volume = EXCLUDED.volume,
+            updated_at = NOW();
         """
 
         self._db.execute(

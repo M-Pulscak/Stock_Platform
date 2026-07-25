@@ -18,7 +18,7 @@ Pouze datové modely (dataclass).
 # repositories
 CRUD rozhraní. Pouze komunikace s DB (PostgreSQL - Supabase).
 
-# services
+# providers
 Komunikace s externími API.
 
 # utils
