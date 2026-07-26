@@ -2,7 +2,7 @@ from __future__ import annotations
 import yfinance as yf
 from config import YAHOO_PRICE
 from models.asset import Asset
-from models.price import Price
+from providers.yahoo.yahoo_models import YahooPrice
 from providers.yahoo.yahoo_mapper import YahooMapper
 
 
@@ -36,7 +36,7 @@ class YahooProvider:
     def get_price_history(
         self,
         ticker: str,
-    ) -> list[Price]:
+    ) -> list[YahooPrice]:
         """
         Returns historical daily prices.
         Parameters

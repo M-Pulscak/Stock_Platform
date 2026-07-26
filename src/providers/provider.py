@@ -1,15 +1,12 @@
 from __future__ import annotations
-
 from typing import Protocol
-
 from models.asset import Asset
-from models.price import Price
+from providers.yahoo.yahoo_models import YahooPrice
 
 
 class MarketDataProvider(Protocol):
     """
     Protocol for market data providers.
-
     Any provider implementing these methods can be used
     by the importers without inheritance.
     """
@@ -20,8 +17,8 @@ class MarketDataProvider(Protocol):
         """
         ...
 
-    def get_price_history(self, ticker: str) -> list[Price]:
-        """
-        Return historical daily prices.
-        """
+    def get_price_history(
+        self,
+        ticker: str,
+    ) -> list[YahooPrice]:
         ...

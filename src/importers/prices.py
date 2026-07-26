@@ -1,6 +1,7 @@
 from providers.provider import MarketDataProvider
 from repositories.asset_repository import AssetRepository
 from repositories.price_repository import PriceRepository
+from models.price import Price
 from utils.logger import get_logger
 
 
@@ -27,7 +28,6 @@ class PriceImporter:
     ) -> int:
         """
         Imports complete historical price series for one ticker.
-
         Returns
         -------
         int
@@ -35,7 +35,6 @@ class PriceImporter:
         """
 
         self._logger.info("Importing prices for %s", ticker)
-
         asset_id = self._asset_repository.get_by_ticker(
             ticker=ticker,
             exchange_mic=exchange_mic,
@@ -45,19 +44,21 @@ class PriceImporter:
             raise ValueError(
                 f"Ticker '{ticker}' does not exist in core.assets."
             )
-
-        prices = self._provider.get_price_history(ticker)
-
+        yahoo_prices = self._provider.get_price_history(ticker)
         count = 0
 
-        for price in prices:
-
-            # Provider vrací Price bez asset_id,
-            # importer doplní vazbu na databázový záznam.
-            price.asset_id = asset_id
-
+        for yahoo_price in yahoo_prices:
+            price = Price(
+                asset_id=asset_id,
+                trading_date=yahoo_price.trading_date,
+                open=yahoo_price.open,
+                high=yahoo_price.high,
+                low=yahoo_price.low,
+                close=yahoo_price.close,
+                adjusted_close=yahoo_price.adjusted_close,
+                volume=yahoo_price.volume,
+            )
             self._price_repository.upsert(price)
-
             count += 1
 
         self._logger.info(

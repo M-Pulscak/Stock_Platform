@@ -139,10 +139,7 @@ class Database:
         sql: Sql,
         params: SqlParams = None,
     ) -> Any:
-
         row = self.fetch_one(sql, params)
-
         if row is None:
             return None
-
         return next(iter(row.values()))

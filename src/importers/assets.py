@@ -20,7 +20,6 @@ class AssetImporter:
     def import_ticker(self, ticker: str) -> int:
         """
         Imports one ticker.
-
         Returns
         -------
         int
@@ -28,11 +27,8 @@ class AssetImporter:
         """
 
         self._logger.info("Importing ticker %s", ticker)
-
         asset = self._provider.get_asset(ticker)
-
         asset_id = self._asset_repository.upsert(asset)
-
         self._logger.info(
             "Imported %s (asset_id=%s)",
             ticker,
@@ -47,27 +43,22 @@ class AssetImporter:
         """
 
         asset_ids: list[int] = []
-
         total = len(tickers)
-
         self._logger.info(
             "Starting batch import (%d tickers)",
             total,
         )
 
         for index, ticker in enumerate(tickers, start=1):
-
             self._logger.info(
                 "[%d/%d] %s",
                 index,
                 total,
                 ticker,
             )
-
             asset_ids.append(
                 self.import_ticker(ticker)
             )
-
         self._logger.info("Batch import finished.")
 
         return asset_ids

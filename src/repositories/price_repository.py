@@ -1,4 +1,5 @@
 from db.database import Database
+from datetime import date
 from models.price import Price
 
 
@@ -8,17 +9,14 @@ class PriceRepository:
         self._db = db
 
     def get_last_trade_date(self, asset_id: int):
-
         sql = """
         SELECT MAX(trade_date)
         FROM market.prices_daily
         WHERE asset_id = %s;
         """
-
         return self._db.scalar(sql, (asset_id,))
 
     def upsert(self, price: Price) -> None:
-
         sql = """
         INSERT INTO market.prices_daily
         (
@@ -42,11 +40,8 @@ class PriceRepository:
             %s,
             %s
         )
-
         ON CONFLICT (asset_id, trade_date)
-
         DO UPDATE SET
-
             open = EXCLUDED.open,
             high = EXCLUDED.high,
             low = EXCLUDED.low,

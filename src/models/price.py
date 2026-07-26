@@ -5,13 +5,12 @@ from decimal import Decimal
 
 
 @dataclass(slots=True)
-class YahooPrice:
+class Price:
     """
-    Historical daily price returned by Yahoo Finance.
-    This model is provider-specific and intentionally does not
-    contain internal database identifiers.
+    Internal domain model representing one daily price stored
+    in the database.
     """
-
+    asset_id: int
     trading_date: date
     open: Decimal
     high: Decimal
