@@ -27,7 +27,8 @@ class PriceImporter:
         exchange_mic: str | None = None,
     ) -> int:
         """
-        Imports complete historical price series for one ticker.
+        Imports historical price series for one ticker.
+
         Returns
         -------
         int
@@ -35,6 +36,7 @@ class PriceImporter:
         """
 
         self._logger.info("Importing prices for %s", ticker)
+
         asset_id = self._asset_repository.get_by_ticker(
             ticker=ticker,
             exchange_mic=exchange_mic,
@@ -44,7 +46,19 @@ class PriceImporter:
             raise ValueError(
                 f"Ticker '{ticker}' does not exist in core.assets."
             )
-        yahoo_prices = self._provider.get_price_history(ticker)
+
+        last_trade_date = self._price_repository.get_last_trade_date(asset_id)
+
+        self._logger.info(
+            "Last trading day in database: %s",
+            last_trade_date if last_trade_date else "none",
+        )
+
+        yahoo_prices = self._provider.get_price_history(
+            ticker=ticker,
+            start_date=last_trade_date,
+        )
+
         count = 0
 
         for yahoo_price in yahoo_prices:
@@ -58,11 +72,12 @@ class PriceImporter:
                 adjusted_close=yahoo_price.adjusted_close,
                 volume=yahoo_price.volume,
             )
+
             self._price_repository.upsert(price)
             count += 1
 
         self._logger.info(
-            "Imported %s daily prices for %s",
+            "Imported %s trading days for %s",
             count,
             ticker,
         )

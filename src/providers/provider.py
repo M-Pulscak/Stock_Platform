@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import date
 from typing import Protocol
 from models.asset import Asset
 from providers.yahoo.yahoo_models import YahooPrice
@@ -20,5 +21,6 @@ class MarketDataProvider(Protocol):
     def get_price_history(
         self,
         ticker: str,
+        start_date: date | None = None,
     ) -> list[YahooPrice]:
         ...

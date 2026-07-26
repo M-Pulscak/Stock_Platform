@@ -4,8 +4,9 @@ from typing import Any, cast
 import pandas as pd
 from pandas import Timestamp
 from models.asset import Asset
-from models.enums import AssetType
 from providers.yahoo.yahoo_models import YahooPrice
+from lookups.asset_type_lookup import AssetTypeLookup
+from lookups.exchange_lookup import ExchangeLookup
 
 
 class YahooMapper:
@@ -31,11 +32,13 @@ class YahooMapper:
         return Asset(
             ticker=symbol,
             provider_symbol=symbol,
-            exchange_mic=exchange,          # TODO ExchangeLookup
+            exchange_mic=ExchangeLookup.yahoo_to_mic(exchange),
             currency_code=currency,
-            asset_type=AssetType.STOCK,
-            name=name,
-        )
+            asset_type=AssetTypeLookup.yahoo_to_asset_type(
+                info.get("quoteType", "")
+            ),
+    name=name,
+)
 
     @staticmethod
     def to_prices(history: pd.DataFrame) -> list[YahooPrice]:
