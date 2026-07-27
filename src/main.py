@@ -10,7 +10,7 @@ from importers.prices import PriceImporter
 
 
 def main():
-    ticker = "MSFT"
+    ticker = "APP"
     provider = YahooProvider()
     with Database() as db:
         exchange_repo = ExchangeRepository(db)
