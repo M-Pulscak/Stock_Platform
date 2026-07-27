@@ -1,42 +1,22 @@
 from db.database import Database
-from providers.yahoo import YahooProvider
-from repositories.exchange_repository import ExchangeRepository
-from repositories.currency_repository import CurrencyRepository
-from repositories.asset_type_repository import AssetTypeRepository
-from repositories.asset_repository import AssetRepository
-from repositories.price_repository import PriceRepository
-from importers.assets import AssetImporter
-from importers.prices import PriceImporter
+from models.universe import Universe
+from providers.universe.wikipedia_sp500_provider import WikipediaSP500Provider
+from services.universe_importer import UniverseImporter
 
 
-def main():
-    ticker = "APP"
-    provider = YahooProvider()
-    with Database() as db:
-        exchange_repo = ExchangeRepository(db)
-        currency_repo = CurrencyRepository(db)
-        asset_type_repo = AssetTypeRepository(db)
-        asset_repo = AssetRepository(
-            db,
-            exchange_repo,
-            currency_repo,
-            asset_type_repo,
-        )
-        price_repo = PriceRepository(db)
-        asset_importer = AssetImporter(
-            provider,
-            asset_repo,
-        )
-        price_importer = PriceImporter(
-            provider,
-            asset_repo,
-            price_repo,
-        )
-        asset_id = asset_importer.import_ticker(ticker)
-        print(f"Imported asset_id = {asset_id}")
-        imported_days = price_importer.import_ticker(ticker)
-        print(f"Imported {imported_days} daily prices")
+with Database() as db:
 
+    importer = UniverseImporter(
+        db=db,
+        universe=Universe(
+            universe_id=None,
+            code="SP500",
+            name="S&P 500",
+            provider="Wikipedia",
+        ),
+        provider=WikipediaSP500Provider(),
+    )
 
-if __name__ == "__main__":
-    main()
+    universe = importer.import_universe()
+
+    print(universe)

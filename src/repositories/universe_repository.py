@@ -21,18 +21,60 @@ class UniverseRepository:
             WHERE code = %s;
         """
 
-        with self.db.connection.cursor() as cur:
-            cur.execute(sql, (code,))
-            row = cur.fetchone()
+        row = self.db.fetch_one(sql, (code,))
 
         if row is None:
             return None
 
         return Universe(
-            universe_id=row[0],
-            code=row[1],
-            name=row[2],
-            provider=row[3],
-            enabled=row[4],
-            sort_order=row[5]
+            universe_id=row["universe_id"],
+            code=row["code"],
+            name=row["name"],
+            provider=row["provider"],
+            enabled=row["enabled"],
+            sort_order=row["sort_order"],
         )
+
+    def create(self, universe: Universe) -> Universe:
+
+        sql = """
+            INSERT INTO core.universes
+            (
+                code,
+                name,
+                provider,
+                enabled,
+                sort_order
+            )
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
+            RETURNING universe_id;
+        """
+
+        row = self.db.fetch_one(
+            sql,
+            (
+                universe.code,
+                universe.name,
+                universe.provider,
+                universe.enabled,
+                universe.sort_order,
+            ),
+        )
+
+        if row is None:
+            raise RuntimeError("Failed to create universe.")
+        universe.universe_id = row["universe_id"]
+        return universe
+
+    def get_or_create(self, universe: Universe) -> Universe:
+        existing = self.get_by_code(universe.code)
+        if existing is not None:
+            return existing
+        return self.create(universe)

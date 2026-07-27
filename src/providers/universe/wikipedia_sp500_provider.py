@@ -1,9 +1,10 @@
 import io
-import requests
-import pandas as pd
 
-from providers.universe.universe_provider import UniverseProvider
+import pandas as pd
+import requests
+
 from models.universe_member import UniverseMember
+from providers.universe.universe_provider import UniverseProvider
 
 
 class WikipediaSP500Provider(UniverseProvider):
@@ -12,26 +13,26 @@ class WikipediaSP500Provider(UniverseProvider):
 
     def get_members(self) -> list[UniverseMember]:
 
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
-
-        response = requests.get(self.URL, headers=headers, timeout=30)
+        response = requests.get(
+            self.URL,
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            },
+            timeout=30,
+        )
         response.raise_for_status()
 
-        df = pd.read_html(io.StringIO(response.text))[0]
+        tables = pd.read_html(io.StringIO(response.text))
+        df = tables[0]
 
-        members = []
-
-        for _, row in df.iterrows():
-            members.append(
-                UniverseMember(
-                    index_code="SP500",
-                    ticker=row["Symbol"].replace(".", "-"),
-                    company_name=row["Security"],
-                    sector=row["GICS Sector"],
-                    industry=row["GICS Sub-Industry"],
-                )
+        members = [
+            UniverseMember(
+                ticker=row["Symbol"],
+                company_name=row["Security"],
+                sector=row["GICS Sector"],
+                industry=row["GICS Sub-Industry"],
             )
+            for _, row in df.iterrows()
+        ]
 
         return members
