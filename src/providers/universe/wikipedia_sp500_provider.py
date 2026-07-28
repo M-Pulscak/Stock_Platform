@@ -1,38 +1,10 @@
-import io
-
-import pandas as pd
-import requests
-
-from models.universe_member import UniverseMember
-from providers.universe.universe_provider import UniverseProvider
+from providers.universe.wikipedia_provider import WikipediaProvider
 
 
-class WikipediaSP500Provider(UniverseProvider):
-
+class WikipediaSP500Provider(WikipediaProvider):
     URL = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-
-    def get_members(self) -> list[UniverseMember]:
-
-        response = requests.get(
-            self.URL,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            },
-            timeout=30,
-        )
-        response.raise_for_status()
-
-        tables = pd.read_html(io.StringIO(response.text))
-        df = tables[0]
-
-        members = [
-            UniverseMember(
-                ticker=row["Symbol"],
-                company_name=row["Security"],
-                sector=row["GICS Sector"],
-                industry=row["GICS Sub-Industry"],
-            )
-            for _, row in df.iterrows()
-        ]
-
-        return members
+    TABLE_INDEX = 0
+    TICKER_COLUMN = "Symbol"
+    COMPANY_COLUMN = "Security"
+    SECTOR_COLUMN = "GICS Sector"
+    INDUSTRY_COLUMN = "GICS Sub-Industry"

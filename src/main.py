@@ -1,22 +1,21 @@
 from db.database import Database
-from models.universe import Universe
-from providers.universe.wikipedia_sp500_provider import WikipediaSP500Provider
-from services.universe_importer import UniverseImporter
+from services.universe_sync_service import UniverseSyncService
+from services.market_import_service import MarketImportService
+from utils.logger import get_logger
 
 
-with Database() as db:
+logger = get_logger(__name__)
 
-    importer = UniverseImporter(
-        db=db,
-        universe=Universe(
-            universe_id=None,
-            code="SP500",
-            name="S&P 500",
-            provider="Wikipedia",
-        ),
-        provider=WikipediaSP500Provider(),
-    )
 
-    universe = importer.import_universe()
+def main():
+    logger.info("Stock Platform started.")
+    with Database() as db:
+        universe_result = UniverseSyncService(db).run()
+        MarketImportService(db).run(
+            universe_result.tickers
+        )
+    logger.info("Stock Platform finished.")
 
-    print(universe)
+
+if __name__ == "__main__":
+    main()
