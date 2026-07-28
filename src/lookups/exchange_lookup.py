@@ -12,6 +12,7 @@ class ExchangeLookup:
 
     _YAHOO_TO_MIC: Final[dict[str, str]] = {
         "NMS": "XNAS",   # Nasdaq Global Select / Global Market
+        "NGM": "XNGM",   # Nasdaq Global Market
         "NYQ": "XNYS",   # New York Stock Exchange
         "ASE": "XASE",   # NYSE American
         "PCX": "ARCX",   # NYSE Arca
