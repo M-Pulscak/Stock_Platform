@@ -29,19 +29,16 @@ class AssetSyncService:
 
     def run(self, tickers: set[str]) -> None:
         total = len(tickers)
-        self.logger.info(
-            "Synchronizing %d asset(s)...",
-            total,
-        )
+        self.logger.info("Synchronizace %d tickerů...", total)
 
         for index, ticker in enumerate(sorted(tickers), start=1):
             self.logger.info(
-                "[%d/%d] %s",
+                " %d z %d. Ticker %s",
                 index,
                 total,
                 ticker,
             )
             self.asset_importer.import_ticker(ticker)
         self.logger.info(
-            "Asset synchronization finished."
+            "Synchronizace tickerů dokončena."
         )

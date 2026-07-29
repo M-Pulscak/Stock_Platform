@@ -35,7 +35,7 @@ class PriceImporter:
             Number of imported trading days.
         """
 
-        self._logger.info("Importing prices for %s", ticker)
+        self._logger.info("Import cen %s", ticker)
 
         asset_id = self._asset_repository.get_by_ticker(
             ticker=ticker,
@@ -50,8 +50,8 @@ class PriceImporter:
         last_trade_date = self._price_repository.get_last_trade_date(asset_id)
 
         self._logger.info(
-            "Last trading day in database: %s",
-            last_trade_date if last_trade_date else "none",
+            "Poslední obchodní data v databázi z: %s",
+            last_trade_date if last_trade_date else "chybí",
         )
 
         yahoo_prices = self._provider.get_price_history(
@@ -77,7 +77,7 @@ class PriceImporter:
             count += 1
 
         self._logger.info(
-            "Imported %s trading days for %s",
+            "Importováno %s obchodních dní pro %s",
             count,
             ticker,
         )

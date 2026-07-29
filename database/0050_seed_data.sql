@@ -68,5 +68,19 @@ VALUES
     'PSE',
     'Prague Stock Exchange',
     'Europe/Prague'
+),
+(
+    (SELECT market_id FROM core.markets WHERE name = 'United States'),
+    'BATS',
+    'CBOE',
+    'Cboe BZX Exchange',
+    'America/New_York'
+),
+(
+    (SELECT market_id FROM core.markets WHERE name = 'United States'),
+    'XNGM',
+    'NASDAQGM',
+    'Nasdaq Global Market',
+    'America/New_York'
 )
 ON CONFLICT (mic) DO NOTHING;

@@ -46,10 +46,10 @@ class PriceImportService:
                 )
                 importer.import_ticker(ticker)
             self.logger.info(
-                "%s committed.",
+                "Ceny %s uloženy do Databáze.",
                 ticker,
             )
 
         self.logger.info(
-            "Price import finished."
+            "Import cen dokončen."
         )

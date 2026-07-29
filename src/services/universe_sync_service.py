@@ -16,7 +16,7 @@ class UniverseSyncService:
         result = UniverseSyncResult()
         definitions = self.registry.get_universes()
         self.logger.info(
-            "Synchronizing %d universe(s)...",
+            "Synchronizace tickerů obsažených ve %d indexech...",
             len(definitions),
         )
 
@@ -36,7 +36,7 @@ class UniverseSyncService:
                 for member in members
             )
         self.logger.info(
-            "Universe synchronization finished. %d unique tickers.",
+            "Aktualizace akciových indexů dokončena. Uloženo %d unikátních tickerů.",
             len(result.tickers),
         )
         return result

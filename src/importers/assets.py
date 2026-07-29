@@ -32,11 +32,11 @@ class AssetImporter:
             Asset ID.
         """
 
-        self._logger.info("Importing ticker %s", ticker)
+        self._logger.info("Download tickeru %s", ticker)
         asset = self._provider.get_asset(ticker)
         asset_id = self._asset_repository.upsert(asset)
         self._logger.info(
-            "Asset synchronized %s (asset_id=%s)",
+            "Ticker %s synchronizován (asset_id=%s)",
             ticker,
             asset_id,
         )
