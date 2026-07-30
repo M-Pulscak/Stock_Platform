@@ -35,6 +35,22 @@ VALUES
     ('Czech Republic', 'CZ', 'Europe/Prague')
 ON CONFLICT (name) DO NOTHING;
 
+-- ============================================================================
+-- PROVIDERS
+-- ============================================================================
+INSERT INTO core.data_providers (code, name, website)
+VALUES
+    ('YAHOO',   'Yahoo Finance',              'https://finance.yahoo.com'),
+    ('FINNHUB', 'Finnhub',                    'https://finnhub.io'),
+    ('POLYGON', 'Polygon.io',                 'https://polygon.io'),
+    ('FMP',     'Financial Modeling Prep',    'https://financialmodelingprep.com'),
+    ('GLEIF',   'Global Legal Entity Identifier Foundation', 'https://www.gleif.org'),
+    ('MANUAL',  'Manual Import',              NULL)
+ON CONFLICT (code)
+DO UPDATE SET
+    name      = EXCLUDED.name,
+    website   = EXCLUDED.website,
+    is_active = TRUE;
 
 -- ============================================================================
 -- EXCHANGES
